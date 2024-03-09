@@ -5,7 +5,7 @@
     font-family: sans-serif;
 }
 header{
-    background-color: #101026;
+    background-color: #b20000;
 }
 li{
     list-style: none;
@@ -34,7 +34,7 @@ a{
     transition: 0.5s ease;
 }
 .nav-link:hover{
-    color: #0088d2;
+    color: #000000;
 }
 .hamburguer{
     display: none;
@@ -64,11 +64,11 @@ a{
     }
     .nav-menu{
         position: fixed;
-        left: 0;
-        top: -140px;
+        left: -100%;
+        top: 70px;
         gap: 0;
         border-radius: 0 0 20px 20px;
-        background-color: #101026;
+        background-color: #000000;
         text-align: center;
         flex-direction: column;
         width: 100%;
@@ -79,6 +79,6 @@ a{
         margin: 16px 0;
     }
     .nav-menu.active{
-        top: 70px;
+        left: 0px;
     }
 }
