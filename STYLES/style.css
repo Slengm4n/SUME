@@ -5,13 +5,13 @@
     font-family: "Poppins", sans-serif;
 }
 header{
-    background-color: #b20000;
+    background-color: #ff0000;
 }
 li{
     list-style: none;
 }
 a{
-    color:#fff;
+    color:#000000;
     text-decoration: none;
 }
 .navbar{
@@ -22,6 +22,7 @@ a{
     padding: 0 34px;
 }
 .logo{
+	color: rgb(255, 255, 255);
     font-size: 2rem;
     font-weight: bold;
 }
@@ -30,7 +31,10 @@ a{
     align-items: center;
     gap: 60px;
 }
+
 .nav-link{
+	font-weight: bolder;
+	color: white;
     transition: 0.5s ease;
 }
 .nav-link:hover{
@@ -46,7 +50,7 @@ a{
     height: 3px;
     border-radius: 2px;
     margin: 5px auto;
-    background-color: #fff;
+    background-color: #ffffff;
     transition: all 0.3s ease-in-out;
 }
 @media (max-width:768px){
@@ -241,7 +245,7 @@ a{
 	transition: .3s;
 }
 
-a:hover{
+.forgot_password:hover{
 	color: #ff6363;
 }
 
@@ -305,3 +309,16 @@ a:hover{
 		justify-content: center;
 	}
 }
+
+	.main_btn{
+		text-decoration: none;
+		color: #000000;
+		padding: 10px;
+		display:flex;
+		
+	}
+
+	.sign-up{
+		padding-top: 20%;
+		padding-left: 20%;
+	}
