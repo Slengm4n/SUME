@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+    <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
+    <script src ="../SCRIPTS/validation.js" defer></script>
+    <title>SUME | Cadastro</title>
+</head>
+<body>
+    <h1>Cadastro</h1>
+
+    <form action="../PHP/process-signup.php" method="post" novalidate>
+        <div>
+            <label for="name">Nome</label>
+            <input type="text" id="name" name="name">
+        </div>
+        
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+        </div>
+
+        <div>
+            <label for="RM">RM</label>
+            <input type="text" id="RM" name="RM">
+        </div>
+        
+        <div>
+            <label for="etec">Códgio ETEC</label>
+            <input type="text" id="codigo" name="codigo">
+        </div>
+        
+        <div>
+            <label for="senha">Senha</label>
+            <input type="password" id="password" name="password">
+        </div>
+
+        <div>
+            <label for="cpassword_confirmation">Repita a senha</label>
+            <input type="password" id="password_confirmation" name="password_confirmation">
+        </div>
+
+        <button>Enviar</button>
+    </form>
+</body>
+</html>
