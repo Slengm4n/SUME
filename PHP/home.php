@@ -24,10 +24,26 @@ if (isset($_SESSION["user_id"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SUME | Home </title>
 	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../STYLES/style.css">
 	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
 </head>
 <body>
-
+    <header>
+        <nav class="navbar">
+            <h1>Sistema Único de Merenda Escolar</h1>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Uniontech</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Saiba mais</a></li>
+                <li class="nav-item"><a href="./PHP/signup&signin.php" class="nav-link">Sair</a></li>
+            </ul>
+            <div class="hamburguer">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
     <h1>Home</h1>
 
     <?php if (isset($user) && $user): ?>

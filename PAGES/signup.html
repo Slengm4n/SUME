@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../STYLES/style.css">
+    <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
+    <script src="../SCRIPTS/validation.js" defer></script>
+    <title>SUME | Cadastro</title>
+</head>
+<body>
+
+    <div class="container1">
+        <div class="form-image">
+            <img src="assets/img//undraw_shopping_re_3wst.svg" alt="">
+        </div>
+        <div class="form">
+            <form action="../PHP/process-signup.php" method="post"></form>
+            <div class="form-header">
+                <div class="title">
+                    <div class="login-button">
+                        <button><a href="#">Entrar</a></button>
+                    </div>
+                </div>
+                    <h1>Cadastre-se</h1>
+                </div>
+
+                  <div class="input-group">
+                    <div class="input-box">
+                        <label for="name">Nome</label>
+                        <input id="name" type="text" name="name" placeholder="Digite seu nome" required>
+                    </div>
+
+                    <div class="input-box">
+                        <label for="email">E-mail</label>
+                        <input id="email" type="email" name="email" placeholder="Digite seu e-mail" required>
+                    </div>
+
+                <div class="input-group">
+                    <div class="input-box">
+                        <label for="RM">RM</label>
+                        <input type="text" id="RM" name="RM" placeholder="Digite seu RM">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-box">
+                        <label for="codigo">Código ETEC</label>
+                        <input type="text" id="codigo" name="codigo" placeholder="Digite o código da sua Etec">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-box">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" placeholder="Digite a sua senha">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-box">
+                        <label for="password_confirmation">Repita a senha</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confime sua senha">
+                    </div>
+                </div>
+
+                <div class="continue-button">
+                    <button><a href="#">Continuar</a> </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION["user_id"] = $user["id"];
 
         // Redireciona para a página inicial após o login bem-sucedido
-        header("Location: /home.php");
+        header("Location: ./home.php");
         exit;
     }
 
