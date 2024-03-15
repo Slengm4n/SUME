@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="./STYLES/style.css">
     <title>SUME</title>
 </head>
@@ -13,8 +13,9 @@
             <a href="#" class="logo">Sistema Único de Merenda Escolar</a>
             <ul class="nav-menu">
                 <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="/PHP/login.php" class="nav-link">Login</a></li>
-                <li class="nav-item"><a href="/PHP/cadastro.php" class="nav-link">Cadastro</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Uniontech</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Saiba mais</a></li>
+                <li class="nav-item"><a href="./PHP/signup&signin.php" class="nav-link">Entrar</a></li>
             </ul>
             <div class="hamburguer">
                 <span class="bar"></span>
@@ -23,13 +24,24 @@
             </div>
         </nav>
     </header>
+    
+    <main>
+        <section class="home">
+            <div class="home-text">
+                <h1 class="text-h1">AJUDE EVITAR O DESPERDÍCIO!</h1>
+                <br>
+                <br>
+                <a href="./PHP/signup&signin.php" class="home-btn">CADASTRE-SE</a>
+                <br>
+                <br><br><br>
+                <a href="#" class="home-btnN">CONFIRMAR</a>
+            </div>
+            <div class="home-img">
+                <img src="IMG/teste.svg" alt="logo-sume">
+            </div>
+        </section>
+    </main>
 
-    <nav class="main_btn">
-        <div class="confirmar_btn"><a href="#">Confirmar</a></div>
-        <div class="cadastrar_btn"><a href="#">Cadastrar</a></div>
-    </nav>
-
-
-<script src="/SCRIPTS/menu.js"></script>
+<script src="./SCRIPTS/menu.js"></script>
 </body>
 </html>
