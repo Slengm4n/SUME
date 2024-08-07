@@ -1,0 +1,212 @@
+@import url(../global/reset.css);
+@import url(../animations/loading.css);
+@import url(../animations/loader.css);
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+.navbar {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+  }
+  
+  .navbar-logo {
+    width: 100px;
+    cursor: pointer;
+  }
+  
+  .navbar-list {
+    width: 100%;
+    text-align: right;
+    padding-right: 2rem;
+  }
+  
+  .navbar-list li {
+    display: inline-block;
+    margin: 0 1rem;
+  }
+  
+  .navbar-list li a {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--black);
+    text-decoration: none;
+  }
+  
+.container-confirmations {
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    display: flex;
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+    max-width: 1500px;
+}
+
+.container-content{
+    padding-left: 30px;
+    gap: 15px;
+    align-items: first baseline;
+    display: flex;
+}
+.main-title{
+    padding-left: 40px;
+    font-size: 40px;
+    font-weight: 400;
+}
+.container-content h2{
+    font-weight: 400;
+}
+
+.container-content p{
+    font-size: 20px;
+    font-weight: 500;
+    color: #e62333;
+}
+
+.total_confirmations{
+    padding-top: 100px;
+    justify-content: center;
+    align-items: first baseline;
+    gap: 10px;
+    display: flex;
+}
+
+.total_confirmations p{
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.total_confirmations span{
+    color: #e62333;
+}
+
+.table_confirmations {
+    overflow: hidden;
+    border-radius: 20px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 60%;
+}
+
+.table_confirmations thead{
+    background-color: #e62333;
+    border-radius: 20px;
+    color: #dee2e6;
+}
+
+.table_confirmations th, td {
+    font-weight: 400;
+    padding: 15px;
+    padding-left: 70px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table_confirmations tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.table_confirmations a {
+    color: #e62333;
+    text-decoration: none;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.table_confirmations a:hover {
+    text-decoration: underline;
+}
+
+.img_table{
+    border-radius: 50%;
+    width: 50px;  
+    height: 50px;
+}
+
+/* Additional styling for responsive design */
+/* Additional styling for responsive design */
+@media (max-width: 768px) {
+    .container-confirmations {
+        padding: 10px;
+    }
+
+    .table_confirmations th, .table_confirmations td {
+        padding: 8px;
+        padding-left: 20px;
+    }
+
+    .container-content {
+        padding-left: 10px;
+    }
+
+    .main-title {
+        font-size: 30px;
+        padding-left: 0;
+    }
+
+    .container-content h2, .container-content p, .total_confirmations p {
+        font-size: 16px;
+        text-align: center;
+        flex-basis: 100%;
+    }
+
+    .total_confirmations {
+        padding-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+
+    .navbar-list {
+        text-align: center;
+        padding-right: 0;
+    }
+
+    .navbar-list li {
+        display: block;
+        margin: 5px 0;
+    }
+
+    .table_confirmations th, .table_confirmations td {
+        padding: 5px;
+        padding-left: 10px;
+        font-size: 14px;
+    }
+
+    .img_table {
+        width: 30px;
+        height: 30px;
+    }
+
+    .main-title {
+        font-size: 24px;
+    }
+
+    .container-content h2, .container-content p, .total_confirmations p {
+        font-size: 14px;
+        text-align: center;
+        flex-basis: 100%;
+    }
+
+    .total_confirmations {
+        padding-top: 10px;
+    }
+}

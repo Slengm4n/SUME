@@ -1,0 +1,346 @@
+body {
+    font-family: 'Karla', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+}
+
+header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.top-bar-white {
+    background-color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    height: 50px;
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+}
+
+.logo-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.logo {
+    height: 40px; /* Ajuste conforme necessário */
+}
+
+.nav-menu {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+nav ul li {
+    display: inline;
+    position: relative;
+}
+
+nav ul li a {
+    color: #292929;
+    text-decoration: none;
+    padding: 0 10px;
+}
+
+nav ul li a:hover {
+    color: black;
+}
+
+nav ul li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -7.5px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 13px;
+    width: 1px;
+    background-color: #ccc;
+}
+
+.social-media {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.social-media a {
+    color: #000000;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 24px;
+}
+
+.social-media a:hover {
+    color: #333;
+}
+
+.top-bar-gray {
+    background-color: #333333;
+    font-size: 12px;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.top-bar-gray p {
+    margin: 0;
+}
+
+main {
+    padding-top: 90px; /* Ajuste conforme necessário */
+}
+
+.hero {
+    background-image: url(/assets/img/utback.jpg);
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+    height: 500px; /* Ajuste conforme necessário */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero h1 {
+    font-size: 3em;
+    margin-bottom: 0.5em;
+}
+
+.hero p {
+    font-size: 1.5em;
+}
+
+.projetos, .sobre-nos, .contato {
+    padding: 40px 20px;
+    background: white;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition    : transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.projetos:hover, .sobre-nos:hover, .contato:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.projetos h2, .sobre-nos h2, .contato h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.projetos-container, .us-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.projeto, .us {
+    background: #f4f4f4;
+    color: #000;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    max-width: 300px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.projeto:hover, .us:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.projeto h3, .us h3 {
+    margin-bottom: 10px;
+}
+
+.projeto p, .us p {
+    font-size: 1em;
+    color: #555;
+    margin: 8px;
+}
+
+.projeto .buttons {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.projeto button {
+    padding: 10px 15px;
+    border: none;
+    background: #555;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: background 0.3s ease;
+}
+
+.projeto button:hover {
+    background: #000;
+}
+
+.projeto:hover .buttons {
+    display: flex;
+}
+
+.contato form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contato form label {
+    font-weight: bold;
+}
+
+.contato form input, .contato form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    transition: border 0.3s ease;
+}
+
+.contato form input:focus, .contato form textarea:focus {
+    border: 1px solid #000;
+}
+
+.contato form button {
+    padding: 15px;
+    border: none;
+    background: #555;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: background 0.3s ease;
+}
+
+.contato form button:hover {
+    background: #000;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #333;
+    color: white;
+    margin-top: 20px;
+}
+
+.btn {
+    text-decoration: none;
+    color: white;
+    background: #555;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.btn:hover {
+    background: #000;
+}
+
+.petstop {
+    padding: 40px 20px;
+    background: white;
+    margin: 180px auto 171px;
+    border-radius: 10px;
+    max-width: 1200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.petstop:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.petstop h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* Media Responsividade */
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none; /* Esconde o menu principal em telas menores */
+    }
+
+    .social-media {
+        justify-content: center; /* Centraliza os ícones sociais */
+    }
+
+    .hero {
+        height: auto; /* Ajusta a altura do herói para conteúdo variável */
+        padding: 80px 20px; /* Reduz o padding vertical */
+    }
+
+    .projetos, .sobre-nos, .contato {
+        padding: 30px 15px; /* Reduz o padding nas seções */
+    }
+
+    .projeto, .us {
+        max-width: 100%; /* Ajusta a largura máxima dos projetos e seções */
+    }
+}
+
+@media (max-width: 480px) {
+    .top-bar-white {
+        flex-direction: column; /* Muda a direção dos itens no cabeçalho */
+        height: auto; /* Ajusta a altura para se adaptar ao conteúdo */
+    }
+
+    .social-media {
+        margin-top: 0; /* Remove a margem superior nos ícones sociais */
+    }
+
+    .top-bar-gray {
+        font-size: 10px; /* Reduz o tamanho do texto no topo cinza */
+    }
+
+    .hero h1 {
+        font-size: 2.5em; /* Reduz o tamanho do título principal */
+    }
+}

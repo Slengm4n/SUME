@@ -1,0 +1,152 @@
+@import url(../global/reset.css);
+@import url(../animations/loading.css);
+@import url(../layouts/header.css);
+
+
+.container-view-food {
+    padding-top: 100px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container-view-food-content {
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    width: 520px;
+    height: 400px;
+    border-radius: 25px;
+    background-color: rgba(240, 240, 240, 0.9);
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+}
+
+.main-title {
+    padding-top: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    text-align: center;
+    padding-top: 10px;
+    color: #e62333;
+    font-weight: 400;
+    font-size: 23px;
+}
+
+.btn-submit {
+    font-weight: 600;
+    color: #dfd9d9;
+    font-weight: 200;
+    transition: transform 0.3s ease; /* Adicionando transição suave para a escala */
+    border-radius: 1rem;
+    padding: 15px;
+    border: none;
+    background-color: #e62333;
+}
+
+.return_btn {
+    border-radius: 1rem;
+    padding-top: 30px;
+    gap: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.return_btn a {
+    font-weight: 200;
+    color: white;
+    text-decoration: none;
+}
+
+.return_btn p {
+    transition: transform 0.3s ease; /* Adicionando transição suave para a escala */
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #e62333;
+}
+
+.return_btn p:hover {
+    transform: scale(1.05); /* Aumenta a escala em 5% */
+}
+
+.btn-submit:hover {
+    transform: scale(1.05); /* Aumenta a escala em 5% */
+}
+
+.return_alright_confirmed {
+    text-align: center;
+    font-size: 20px;
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    .container-view-food {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container-view-food-content {
+        width: 75%;
+        height: 250px;
+        padding: 15px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        padding-bottom: 40px;
+    }
+
+    .btn-submit {
+        width: 100%;
+    }
+
+    .return_btn {
+        flex-direction: column;
+        padding-top: 20px;
+    }
+
+    .return_btn p {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container-view-food {  
+        align-items: center;
+        justify-content: center;
+    }
+
+    .main-title {
+        font-size: 18px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        padding-bottom: 50px;
+    }
+
+    .btn-submit {
+        font-weight: 600;
+        padding: 10px;
+    }
+
+    .return_btn {
+        gap: 10px;
+    }
+
+    .return_btn p {
+        padding: 8px;
+    }
+
+    .return_alright_confirmed {
+        font-size: 16px;
+    }
+}

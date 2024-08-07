@@ -1,0 +1,303 @@
+@import url(../global/reset.css);
+@import url(../animations/loading.css);
+
+:root {
+  --secondary: #e62333;
+  --secondary-light: rgba(124, 34, 34, 0.2);
+  --secondary-light-2: rgb(124, 34, 34, 0.2);
+  --white: #fff;
+  --black: #393e46;
+
+  --shadow: 0px 2px 8px 0px var(--secondary-light);
+}
+
+body {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--primary);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  background-color: var(--white);
+  padding: 0 8%;
+  box-shadow: var(--shadow);
+}
+
+.navbar-logo {
+  width: 100px;
+  cursor: pointer;
+}
+
+.navbar-list {
+  width: 100%;
+  text-align: right;
+  padding-right: 2rem;
+}
+
+.navbar-list li {
+  display: inline-block;
+  margin: 0 1rem;
+}
+
+.navbar-list li a {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.profile-dropdown {
+  width: 250p x;
+  position: relative;
+}
+
+.profile-dropdown-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  width: 50 px;
+  border-radius: 50px;
+  color: var(--black);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in, background-color 0.2s ease-in,
+    border 0.3s;
+}
+
+.profile-img {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-size: cover;
+}
+
+.profile-img img {
+  width: auto;
+  height: auto;
+  max-width: 50px; /* Ajusta a largura da imagem para preencher o contêiner */
+  max-height: 50px; /* Ajusta a altura da imagem para preencher o contêiner */
+  border-radius: 50%; /* Garante que a imagem seja exibida como um círculo */
+  object-fit: cover; /* Mantém a proporção da imagem e preenche o contêiner */
+}
+
+.profile-dropdown-btn span {
+  margin: 0 0.5rem;
+  margin-right: 0;
+}
+
+.profile-dropdown-list {
+  position: absolute;
+  top: 68px;
+  width: 220px;
+  right: 0;
+  background-color: var(--white);
+  border-radius: 10px;
+  max-height: 0;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: max-height 0.5s;
+}
+
+.profile-dropdown-list hr {
+  border: 0.5px solid var(--green);
+}
+
+.profile-dropdown-list.active {
+  max-height: 500px;
+}
+
+.profile-dropdown-list-item {
+  padding: 0.5rem 0rem 0.5rem 1rem;
+  transition: background-color 0.2s ease-in, padding-left 0.2s;
+}
+
+.profile-dropdown-list-item a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.profile-dropdown-list-item a i {
+  margin-right: 0.8rem;
+  font-size: 1.1rem;
+  width: 2.3rem;
+  height: 2.3rem;
+  background-color: var(--secondary);
+  color: var(--white);
+  line-height: 2.3rem;
+  text-align: center;
+  margin-right: 1rem;
+  border-radius: 50%;
+  transition: margin-right 0.3s;
+}
+
+.profile-dropdown-list-item:hover {
+  padding-left: 1.5rem;
+  background-color: var(--secondary-light);
+}
+/* Estilos específicos para o ícone do menu hambúrguer do index.html */
+.hamburguer {
+    display: none;
+    cursor: pointer;
+}
+
+/* Estilos específicos para as barras do ícone do menu hambúrguer do index.html */
+.bar {
+    display: block;
+    width: 28px;
+    height: 3px;
+    border-radius: 2px;
+    margin: 5px auto;
+    background-color: #ff0000;
+    transition: all 0.3s ease-in-out;
+}
+
+.wellcome{
+    padding-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.wellcome .text{
+    text-transform: uppercase;
+}
+
+/* Estilos para o submenu */
+.submenu {
+    display: none;
+    position: absolute;
+    background-color: #eb2424;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 15px;
+    list-style: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Adicionando uma transição suave para a opacidade */
+}
+
+
+/*CARDS<-------------------------------------------------------------------------------------------------------->*/
+
+  .cards_user{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    font-family: "Poppins";
+  }
+  
+  .cards_admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    font-family: "Poppins";
+    gap: 50px;
+  }
+  
+  .card {
+    display: flex; /* Adicionado para tornar os elementos filhos flexĆ­veis */
+    flex-direction: column; /* Ajusta o layout para coluna */
+    width: 200px;
+    height: 250px;
+    border-radius: 12px;
+    box-shadow: 4px 4px 12px #aaaa;
+    transition: transform 0.3s ease; /* Adicionando transição suave para a escala */
+  }
+  
+  .card:hover {
+    transform: scale(1.05); /* Aumenta a escala em 5% */
+}
+  .card img {
+    width: 100%;
+    height: 130px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+  
+  .card .card-link {
+    background-color: #e62333;
+    height: 30px;
+    width: 100%;
+    border: none;
+    padding: 10px;
+    max-width: 150px;
+    text-align: center;
+    margin: auto;
+    border-radius: 4px;
+    display: flex; /* Adicionado para centralizar o texto verticalmente */
+    justify-content: center; /* Adicionado para centralizar o texto horizontalmente */
+    align-items: center; /* Adicionado para centralizar o texto verticalmente */
+  }
+  
+  .card .card-link a {
+    display: block;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    line-height: 30px; /* Adicionado para centralizar verticalmente o texto */
+  }
+  
+  .card-title {
+    text-transform: uppercase;  
+    padding-top: 5px;
+    font-size: 6px;
+    text-align: center;
+  }
+  
+  .card-desc {
+    padding-bottom: 13px;
+    font-weight: lighter;
+    font-size: 10px;
+    text-align: center;
+  }
+  
+  .card-link a:hover{
+    transition: all 0.8s;
+    color: #000000;
+  }
+/*FIM CARDS<------------------------------------------------------------->*/
+
+
+
+
+
+/* Responsividade para telas menores específica do index.html */
+@media (max-width:768px){
+
+    .cards_users{
+      padding-top: 100px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .cards_admin{
+        padding-top: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .navbar-list{
+        position: fixed;
+        left: -100%; 
+    }
+
+    .profile-dropdown{
+        padding-left: 150px
+    }
+}
+
+
