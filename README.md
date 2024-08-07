@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="[http://www.amitmerchant.com/electron-markdownify](https://sume.42web.io/)"><img src="https://github.com/Slengm4n/SUME/blob/071cbb60da16033138a7ed59a540e6bcbdcec471/assets/img/SUME.png" alt="Markdownify" width="200"></a>
+  <a href="[http://www.amitmerchant.com/electron-markdownify](https://sume.42web.io/)"><img src="https://github.com/Slengm4n/SUME/blob/071cbb60da16033138a7ed59a540e6bcbdcec471/assets/img/SUME.png" alt="Markdownify" width="500"></a>
   <br>
   SUME
   <br>
