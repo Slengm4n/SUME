@@ -7,7 +7,7 @@
   <br>
 </h1>
 
-<h4 align="center">Site desenvolvido pela <a href="http://electron.atom.io" target="_blank">UNIONTECH</a>.</h4>
+<h4 align="center">Site desenvolvido pela <a href="https://uniontech.42web.io/ target="_blank">UNIONTECH</a>.</h4>
 
 <p align="center">
   <a href="#how-to-use">Como usar</a> •
