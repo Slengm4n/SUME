@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="[http://www.amitmerchant.com/electron-markdownify](https://sume.42web.io/)"><blockquote class="imgur-embed-pub" lang="en" data-id="a/RJcrxvx" data-context="false" ><a href="//imgur.com/a/RJcrxvx"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+  <a href="[http://www.amitmerchant.com/electron-markdownify](https://sume.42web.io/)">"><img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.png" alt="Markdownify" width="200"></a>
   <br>
   SUME
   <br>
