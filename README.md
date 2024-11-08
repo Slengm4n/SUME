@@ -1,5 +1,5 @@
 
-![Logo](https://i.postimg.cc/RhFrrKzy/SUME-1.png)
+![Logo](https://i.postimg.cc/P5R118yy/SUME-1.png)
 
 
 
