@@ -1,0 +1,19 @@
+# Configuração local (contém senhas)
+.env
+
+# Fotos enviadas pelos usuários (dados pessoais — nunca versionar)
+/public/uploads/avatars/*
+!/public/uploads/avatars/.gitkeep
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Logs locais (e-mails em modo "log" etc.)
+/storage/logs/*
+!/storage/logs/.gitkeep

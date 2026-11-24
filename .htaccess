@@ -1,0 +1,17 @@
+# Permite abrir o projeto em http://localhost/SUME (XAMPP/WampServer)
+# encaminhando tudo para a pasta public/. Assim app/, config/, .env,
+# database/ e vendor/ nunca ficam acessíveis pelo navegador.
+#
+# Em produção, o ideal é apontar o DocumentRoot direto para public/.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Sem mod_rewrite, bloqueia tudo para não expor o código
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
