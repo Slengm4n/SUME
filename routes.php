@@ -10,8 +10,10 @@ use App\Controllers\Admin\WasteController;
 use App\Controllers\AuthController;
 use App\Controllers\ContactController;
 use App\Controllers\DashboardController;
+use App\Controllers\GoogleController;
 use App\Controllers\MealController;
 use App\Controllers\PageController;
+use App\Controllers\PasswordResetController;
 use App\Controllers\ProfileController;
 use App\Controllers\RankingController;
 use App\Core\Router;
@@ -30,6 +32,19 @@ $router->post('/entrar', [AuthController::class, 'login'], ['guest']);
 $router->get('/cadastro', [AuthController::class, 'showRegister'], ['guest']);
 $router->post('/cadastro', [AuthController::class, 'register'], ['guest']);
 $router->post('/sair', [AuthController::class, 'logout'], ['auth']);
+
+// Recuperação de senha
+$router->get('/esqueci-senha', [PasswordResetController::class, 'showRequest'], ['guest']);
+$router->post('/esqueci-senha', [PasswordResetController::class, 'sendLink'], ['guest']);
+$router->get('/redefinir-senha', [PasswordResetController::class, 'showReset'], ['guest']);
+$router->post('/redefinir-senha', [PasswordResetController::class, 'reset'], ['guest']);
+
+// Login com Google (o callback serve tanto para entrar quanto para vincular pelo perfil)
+$router->get('/auth/google', [GoogleController::class, 'redirect']);
+$router->get('/auth/google/callback', [GoogleController::class, 'callback']);
+$router->get('/cadastro/google', [GoogleController::class, 'showComplete'], ['guest']);
+$router->post('/cadastro/google', [GoogleController::class, 'complete'], ['guest']);
+$router->post('/perfil/google/desconectar', [GoogleController::class, 'unlink'], ['auth']);
 
 // Área do usuário
 $router->get('/painel', [DashboardController::class, 'index'], ['auth']);

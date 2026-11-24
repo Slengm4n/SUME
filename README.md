@@ -11,6 +11,7 @@ O SUME ajuda escolas a **reduzir o desperdício da merenda**: cada aluno confirm
 - Avaliar refeições com 1 a 5 estrelas e comentário
 - Ganhar pontos e acompanhar o ranking da escola
 - Editar perfil, foto e senha
+- Entrar com a conta Google ou com e-mail/RM e senha; recuperar a senha por e-mail
 
 **Administradores (cozinha/gestão)**
 - Cadastrar o cardápio por data
@@ -62,6 +63,7 @@ php -S localhost:8000 -t public public/index.php
    ```bash
    mysql -u root sume_db < database/migrations/001_atualiza_banco_legado.sql
    mysql -u root sume_db < database/migrations/002_controle_desperdicio.sql
+   mysql -u root sume_db < database/migrations/003_login_google_e_recuperacao_senha.sql
    ```
 3. Mova as fotos antigas de `uploads/` para `public/uploads/avatars/`.
 4. Crie o `.env` (passo 4 da instalação).
@@ -110,6 +112,46 @@ Para adicionar uma página: crie a rota em `routes.php`, o método no controller
 
 As regras "uma refeição por dia", "uma confirmação por aluno" e "uma avaliação por aluno" são garantidas por índices únicos no próprio banco. Veja os detalhes em [`database/schema.sql`](database/schema.sql).
 
+## E-mail e login com Google
+
+Os dois são opcionais: sem configuração, o SUME funciona com e-mail/RM e senha, e as telas avisam o que falta.
+
+### Enviar e-mails pelo Gmail (recuperação de senha e contato)
+
+1. Na conta Gmail que vai enviar os e-mails, ative a **verificação em duas etapas**: https://myaccount.google.com/security
+2. Crie uma **senha de app**: https://myaccount.google.com/apppasswords (nome: "SUME")
+3. No `.env`, preencha (a senha de app tem 16 letras, cole sem espaços):
+   ```
+   MAIL_USERNAME=suaconta@gmail.com
+   MAIL_PASSWORD=abcdefghijklmnop
+   MAIL_FROM_ADDRESS=suaconta@gmail.com
+   MAIL_SUPPORT_ADDRESS=suaconta@gmail.com
+   ```
+
+Para testar sem enviar nada, use `MAIL_DRIVER=log`: os e-mails vão para `storage/logs/mail.log`.
+
+### Entrar com Google
+
+1. Acesse https://console.cloud.google.com e crie um projeto (ex.: "SUME").
+2. **APIs e serviços → Tela de consentimento OAuth**: tipo **Externo**, nome "SUME", seu e-mail de suporte. Em "Público-alvo", adicione seu e-mail como **usuário de teste** (enquanto o app estiver "Em teste", só usuários de teste conseguem entrar).
+3. **APIs e serviços → Credenciais → Criar credenciais → ID do cliente OAuth → Aplicativo da Web.**
+   Em **URIs de redirecionamento autorizados**, coloque exatamente:
+   ```
+   http://localhost:8080/SUME/auth/google/callback
+   ```
+   (ajuste porta/pasta se o seu XAMPP for diferente; em produção, use o endereço público com https)
+4. Copie o **ID do cliente** e a **chave secreta** para o `.env`:
+   ```
+   APP_URL=http://localhost:8080/SUME
+   GOOGLE_CLIENT_ID=123456-abc.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=GOCSPX-...
+   ```
+5. Opcional: `GOOGLE_ALLOWED_DOMAINS=etec.sp.gov.br` para aceitar só e-mails da escola.
+
+Como funciona: quem já tem conta com o mesmo e-mail é vinculado automaticamente; quem é novo completa o cadastro com RM e código da ETEC. Pelo perfil dá para conectar/desconectar o Google e criar uma senha.
+
+> **Em produção, sempre defina `APP_URL`.** Ele é usado nos links enviados por e-mail e no retorno do Google; sem ele, o endereço viria do cabeçalho da requisição, que pode ser forjado.
+
 ## Como funciona a previsão de demanda
 
 Nem todo aluno que confirma aparece. Para cada refeição com sobras registradas, o SUME calcula a **taxa de comparecimento** = porções servidas (preparadas − sobras) ÷ confirmados. A sugestão de preparo é:
@@ -127,6 +169,8 @@ Se houver pelo menos 3 registros do **mesmo dia da semana**, usa só eles (ex.: 
 - Token CSRF obrigatório em todo POST
 - Permissão por rota (`auth` / `admin`) aplicada no roteador
 - Sessão com cookie `HttpOnly` + `SameSite`, ID regenerado no login, limite de tentativas de login
+- Login com Google via OpenID Connect com `state`, `nonce` e PKCE; só aceita e-mail verificado
+- Links de redefinição de senha: aleatórios, de uso único, expiram em 60 min e ficam só como hash no banco; a resposta não revela se o e-mail existe
 - Upload de foto validado pelo conteúdo real do arquivo; scripts não executam em `uploads/`
 - Credenciais só no `.env` (fora do git)
 
@@ -136,7 +180,11 @@ Com o servidor rodando e um banco vazio contendo só o admin de teste:
 
 ```bash
 php bin/create-admin.php "Admin" admin@teste.com      # senha: Admin1234
-BASE_URL=http://localhost:8000 bash tests/smoke.sh
+php -S 127.0.0.1:8766 tests/fake-google.php &            # Google falso
+MAIL_DRIVER=log GOOGLE_CLIENT_ID=test-client GOOGLE_CLIENT_SECRET=test-secret \
+  GOOGLE_AUTH_URL=http://127.0.0.1:8766/auth GOOGLE_TOKEN_URL=http://127.0.0.1:8766/token \
+  php -S 127.0.0.1:8765 -t public public/index.php &
+BASE_URL=http://127.0.0.1:8765 bash tests/smoke.sh
 ```
 
 O GitHub Actions roda lint + esse teste a cada push/PR (`.github/workflows/php.yml`).

@@ -49,7 +49,9 @@ final class ProfileController
         $v->password('new_password')
           ->same('new_password', 'new_password_confirmation', 'As senhas não conferem.');
 
-        if (!password_verify((string) ($_POST['current_password'] ?? ''), (string) $users->passwordHash(Auth::id()))) {
+        // Quem entrou só pelo Google ainda não tem senha: cria a primeira sem pedir a atual
+        $hash = $users->passwordHash(Auth::id());
+        if ($hash !== null && !password_verify((string) ($_POST['current_password'] ?? ''), $hash)) {
             $v->add('current_password', 'Senha atual incorreta.');
         }
         if ($v->fails()) {
@@ -58,7 +60,7 @@ final class ProfileController
         }
 
         $users->updatePassword(Auth::id(), (string) $_POST['new_password']);
-        flash('success', 'Senha alterada com sucesso.');
+        flash('success', $hash === null ? 'Senha criada! Agora você também pode entrar com e-mail/RM e senha.' : 'Senha alterada com sucesso.');
         redirect('/perfil');
     }
 

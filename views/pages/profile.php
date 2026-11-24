@@ -56,13 +56,17 @@
 
         <form method="post" action="<?= url('/perfil/senha') ?>" class="card form" id="senha" novalidate>
             <?= csrf_field() ?>
-            <h2 class="card__title"><?= icon('lock') ?> Alterar senha</h2>
+            <h2 class="card__title"><?= icon('lock') ?> <?= $user['has_password'] ? 'Alterar senha' : 'Criar senha' ?></h2>
 
-            <div class="field">
-                <label for="current_password">Senha atual</label>
-                <input type="password" id="current_password" name="current_password" autocomplete="current-password" required<?= field_invalid('current_password') ?>>
-                <?= field_error('current_password') ?>
-            </div>
+            <?php if ($user['has_password']): ?>
+                <div class="field">
+                    <label for="current_password">Senha atual</label>
+                    <input type="password" id="current_password" name="current_password" autocomplete="current-password" required<?= field_invalid('current_password') ?>>
+                    <?= field_error('current_password') ?>
+                </div>
+            <?php else: ?>
+                <p class="muted small">Você entra com o Google. Crie uma senha se quiser entrar também com e-mail/RM.</p>
+            <?php endif; ?>
             <div class="form__row">
                 <div class="field">
                     <label for="new_password">Nova senha</label>
@@ -77,8 +81,32 @@
             </div>
 
             <div class="form__actions">
-                <button type="submit" class="btn btn--primary">Alterar senha</button>
+                <button type="submit" class="btn btn--primary"><?= $user['has_password'] ? 'Alterar senha' : 'Criar senha' ?></button>
             </div>
         </form>
+
+        <?php if ($user['google_id'] || \App\Services\GoogleAuth::isConfigured()): ?>
+            <section class="card" aria-labelledby="google-titulo">
+                <h2 id="google-titulo" class="card__title"><?= icon('shield') ?> Conta Google</h2>
+                <?php if ($user['google_id']): ?>
+                    <div class="connected">
+                        <p><span class="badge badge--success"><?= icon('check') ?> Conectada</span> Você pode entrar com o botão "Entrar com Google".</p>
+                        <?php if ($user['has_password']): ?>
+                            <form method="post" action="<?= url('/perfil/google/desconectar') ?>">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn--ghost btn--sm" data-confirm="Desconectar sua conta Google? Você continuará entrando com e-mail/RM e senha.">Desconectar</button>
+                            </form>
+                        <?php else: ?>
+                            <p class="muted small">Para desconectar, crie uma senha antes.</p>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="muted">Conecte sua conta Google para entrar com um clique, sem digitar senha.</p>
+                    <div class="form__actions form__actions--start">
+                        <a href="<?= url('/auth/google') ?>" class="btn btn--google">Conectar conta Google</a>
+                    </div>
+                <?php endif; ?>
+            </section>
+        <?php endif; ?>
     </div>
 </div>

@@ -35,14 +35,15 @@ final class AuthController
 
         $user = $identifier !== '' ? (new UserRepository())->findForLogin($identifier) : null;
 
-        if (!$user || !password_verify($password, $user['password_hash'])) {
+        // Conta criada pelo Google pode não ter senha (password_hash NULL)
+        if (!$user || $user['password_hash'] === null || !password_verify($password, $user['password_hash'])) {
             $attempts['count']++;
             if ($attempts['count'] >= self::MAX_ATTEMPTS) {
                 $attempts = ['count' => 0, 'until' => time() + self::LOCK_SECONDS];
             }
             Session::put('login_attempts', $attempts);
 
-            flash('error', 'E-mail/RM ou senha incorretos.');
+            flash('error', 'E-mail/RM ou senha incorretos.' . (\App\Services\GoogleAuth::isConfigured() ? ' Se você criou a conta com o Google, use o botão "Entrar com Google".' : ''));
             with_input();
             redirect('/entrar');
         }

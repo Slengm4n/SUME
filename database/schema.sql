@@ -16,14 +16,16 @@ CREATE TABLE IF NOT EXISTS user (
     email           VARCHAR(150)  NOT NULL,
     RM              VARCHAR(20)   NULL,
     codigo          VARCHAR(20)   NULL,
-    password_hash   VARCHAR(255)  NOT NULL,
+    password_hash   VARCHAR(255)  NULL,           -- NULL = conta que só entra pelo Google
+    google_id       VARCHAR(64)   NULL,
     profile_picture VARCHAR(255)  NULL,
     is_master       TINYINT(1)    NOT NULL DEFAULT 0,
     points          INT           NOT NULL DEFAULT 0,
     created_at      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uq_user_email (email),
-    UNIQUE KEY uq_user_rm (RM)
+    UNIQUE KEY uq_user_rm (RM),
+    UNIQUE KEY uq_user_google (google_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Cardápio: uma refeição por dia + registro de desperdício (preenchido após servir)
@@ -66,4 +68,18 @@ CREATE TABLE IF NOT EXISTS feedbacks (
     KEY idx_feedback_meal (meal_id),
     CONSTRAINT fk_feedback_user FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
     CONSTRAINT fk_feedback_menu FOREIGN KEY (meal_id) REFERENCES menu (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Links de redefinição de senha (guardamos só o hash do token)
+CREATE TABLE IF NOT EXISTS password_resets (
+    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id     INT UNSIGNED NOT NULL,
+    token_hash  CHAR(64)     NOT NULL,
+    expires_at  DATETIME     NOT NULL,
+    used_at     DATETIME     NULL,
+    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_reset_token (token_hash),
+    KEY idx_reset_user (user_id),
+    CONSTRAINT fk_reset_user FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

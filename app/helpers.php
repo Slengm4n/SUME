@@ -71,6 +71,24 @@ function url(string $path = '/', array $query = []): string
     return $url;
 }
 
+/**
+ * URL completa (com http://host), usada em e-mails e no retorno do Google.
+ * Em produção defina APP_URL: sem ele, o host vem do cabeçalho da requisição,
+ * que pode ser forjado (ataque de "envenenamento" do link de redefinição).
+ */
+function absolute_url(string $path = '/', array $query = []): string
+{
+    $relative = url($path, $query);
+    if (preg_match('#^https?://#', $relative)) {
+        return $relative;
+    }
+
+    $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $host = preg_replace('/[^A-Za-z0-9.\-:\[\]]/', '', (string) ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+
+    return ($https ? 'https' : 'http') . '://' . $host . $relative;
+}
+
 /** URL de arquivo estático com "cache busting" pela data de modificação. */
 function asset(string $path): string
 {
@@ -84,7 +102,8 @@ function asset(string $path): string
 function current_path(): string
 {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    $base = base_url();
+    // Com APP_URL a base é absoluta (http://host/SUME): compara só a parte do caminho
+    $base = rtrim((string) parse_url(base_url(), PHP_URL_PATH), '/');
     if ($base !== '' && str_starts_with($path, $base)) {
         $path = substr($path, strlen($base));
     }

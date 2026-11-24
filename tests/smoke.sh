@@ -149,6 +149,91 @@ req admin GET "/admin/confirmacoes/exportar?data=$TODAY"
 check "exporta a lista de confirmados em CSV" 'grep -qi "^content-type: text/csv" "$WORK/headers" && grep -q "12345" "$WORK/body"'
 check "CSV neutraliza fórmulas (nome iniciado por =/+/-/@ não vira fórmula)" '! grep -q ";=" "$WORK/body"'
 
+echo "Recuperação de senha"
+MAIL_LOG="${MAIL_LOG:-storage/logs/mail.log}"
+: > "$WORK/mail.before"; [ -f "$MAIL_LOG" ] && cp "$MAIL_LOG" "$WORK/mail.before"
+req reset GET /esqueci-senha
+check "tela 'esqueci minha senha' abre" '[ "$STATUS" = 200 ] && body_has "Enviar link"'
+T=$(token)
+req reset POST /esqueci-senha --data-urlencode "_token=$T" --data-urlencode 'email=ninguem@teste.com'
+req reset GET /entrar
+check "e-mail inexistente recebe a mesma resposta (não revela contas)" 'body_has "Se existir uma conta"'
+check "e nenhum e-mail é enviado para conta inexistente" '! grep -q "ninguem@teste.com" "$MAIL_LOG" 2>/dev/null'
+req reset2 GET /esqueci-senha
+T=$(token)
+req reset2 POST /esqueci-senha --data-urlencode "_token=$T" --data-urlencode 'email=aluno@teste.com'
+RESET_LINK=$(grep -o "$BASE_URL/redefinir-senha?token=[a-f0-9]*" "$MAIL_LOG" 2>/dev/null | tail -1)
+check "link de redefinição chega por e-mail" '[ -n "$RESET_LINK" ]'
+RESET_PATH="${RESET_LINK#$BASE_URL}"
+req reset2 GET "$RESET_PATH"
+check "link abre a tela de nova senha" 'body_has "Crie uma nova senha"'
+T=$(token); RTOKEN="${RESET_PATH##*token=}"
+req reset2 POST /redefinir-senha --data-urlencode "_token=$T" --data "token=$RTOKEN" --data 'password=fraca' --data 'password_confirmation=fraca'
+req reset2 GET "$RESET_PATH"
+check "senha fraca é recusada na redefinição" 'body_has "pelo menos 8"'
+T=$(token)
+req reset2 POST /redefinir-senha --data-urlencode "_token=$T" --data "token=$RTOKEN" --data 'password=NovaSenha123' --data 'password_confirmation=NovaSenha123'
+check "nova senha salva e volta para o login" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */entrar ]]'
+req reset2 GET "$RESET_PATH"
+check "o mesmo link não funciona duas vezes" 'body_has "Link inválido"'
+req reset2 GET "/redefinir-senha?token=$(printf 'a%.0s' {1..64})"
+check "token inventado é recusado" 'body_has "Link inválido"'
+req novo GET /entrar
+T=$(token)
+req novo POST /entrar --data-urlencode "_token=$T" --data 'identifier=12345' --data 'password=NovaSenha123'
+check "entra com a nova senha (pelo RM)" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */painel ]]'
+
+echo "Login com Google"
+# google_login <jar> <sub> <email> <nome>: percorre app -> Google falso -> callback
+google_login() {
+  req "$1" GET /auth/google
+  local auth_url="$LOCATION"
+  local cb
+  cb=$(curl -s -o /dev/null -w '%{redirect_url}' -G "$auth_url" --data-urlencode "fake_sub=$2" --data-urlencode "fake_email=$3" --data-urlencode "fake_name=$4")
+  CALLBACK_PATH="${cb#$BASE_URL}"
+  req "$1" GET "$CALLBACK_PATH"
+}
+req g1 GET /entrar
+check "botão 'Entrar com Google' aparece quando configurado" 'body_has "Entrar com Google"'
+google_login g1 g-999 'novo.google@gmail.com' 'Gabi Google'
+check "pessoa nova vai completar o cadastro" '[[ "$LOCATION" == */cadastro/google ]]'
+req g1 GET /cadastro/google
+check "cadastro traz nome e e-mail vindos do Google" 'body_has "novo.google@gmail.com" && body_has "Gabi Google"'
+T=$(token)
+req g1 POST /cadastro/google --data-urlencode "_token=$T" --data-urlencode 'name=Gabi Google' --data 'rm=77777' --data 'codigo=101' --data 'terms=1'
+check "cadastro pelo Google cria a conta e entra" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */painel ]]'
+req g1 GET /perfil
+check "conta Google aparece como conectada no perfil" 'body_has "Conectada" && body_has "Criar senha"'
+T=$(token)
+req g1 POST /perfil/senha --data-urlencode "_token=$T" --data 'new_password=Senha9999' --data 'new_password_confirmation=Senha9999'
+req g1 GET /perfil
+check "conta só-Google cria senha sem pedir a atual" 'body_has "Senha criada" && body_has "Alterar senha"'
+req g1 POST /sair --data-urlencode "_token=$T"
+google_login g1b g-999 'novo.google@gmail.com' 'Gabi Google'
+check "mesma conta Google entra direto no painel" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */painel ]]'
+req g1b GET "$CALLBACK_PATH"
+check "retorno do Google não pode ser reaproveitado (state de uso único)" '[[ "$LOCATION" == */entrar ]] || [[ "$LOCATION" == */perfil ]]'
+google_login g2 g-123 'admin@teste.com' 'Cozinha'
+check "e-mail já cadastrado é vinculado e entra" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */painel ]]'
+req g2 GET /painel
+check "entrou na conta certa (admin)" 'body_has "Painel da cozinha"'
+req g3 GET /auth/google
+FAKE_STATE=$(printf 'b%.0s' {1..32})
+req g3 GET "/auth/google/callback?state=$FAKE_STATE&code=qualquer"
+req g3 GET /entrar
+check "state adulterado é recusado" 'body_has "não é válida"'
+req g3 GET /painel
+check "e não fica logado" '[ "$STATUS" = 302 ]'
+req g4 GET /auth/google
+cb=$(curl -s -o /dev/null -w '%{redirect_url}' -G "$LOCATION" --data-urlencode 'fake_error=access_denied')
+req g4 GET "${cb#$BASE_URL}"
+check "cancelar no Google volta ao login com aviso" '[[ "$LOCATION" == */entrar ]]'
+req g5 GET /auth/google
+cb=$(curl -s -o /dev/null -w '%{redirect_url}' -G "$LOCATION" --data-urlencode 'fake_sub=g-555' --data-urlencode 'fake_email=nao.verificado@gmail.com' --data 'fake_unverified=1')
+req g5 GET "${cb#$BASE_URL}"
+req g5 GET /entrar
+check "e-mail Google não verificado é recusado" 'body_has "não foi verificado"'
+
 echo "Administração de usuários"
 req admin GET /admin/usuarios
 check "lista de usuários escapa nomes" 'body_has "&lt;script&gt;alert(1)&lt;/script&gt;" && ! body_has "<script>alert(1)"'

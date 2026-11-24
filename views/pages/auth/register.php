@@ -1,6 +1,8 @@
 <h1 class="auth__title">Criar conta</h1>
 <p class="auth__subtitle">Leva menos de um minuto.</p>
 
+<?php $label = 'Cadastrar com Google'; require BASE_PATH . '/views/partials/google-button.php'; ?>
+
 <form method="post" action="<?= url('/cadastro') ?>" class="form" novalidate>
     <?= csrf_field() ?>
 

@@ -670,6 +670,22 @@ input[type="date"] { min-height: 40px; padding-block: 6px; }
 .auth__switch { text-align: center; margin-top: 24px; color: var(--text-muted); }
 .auth__switch a { font-weight: 700; }
 
+/* Autenticação: Google, divisor, recuperação ------------------------------ */
+.btn--google { --btn-bg: var(--surface); --btn-fg: var(--text); --btn-border: var(--border-strong); }
+.btn--google:hover { --btn-bg: var(--surface-2); }
+.btn--google .icon { width: 20px; height: 20px; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-muted); font-size: .82rem; font-weight: 600; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.field__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.field__row label { font-weight: 600; font-size: .9rem; }
+.google-account { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 20px; border-radius: var(--radius-sm); background: var(--surface-2); }
+.google-account > div { display: grid; min-width: 0; }
+.google-account strong { overflow: hidden; text-overflow: ellipsis; }
+.connected { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.connected p { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.form__actions--start { justify-content: flex-start; margin-top: 14px; }
+.btn[disabled] { opacity: .5; pointer-events: none; }
+
 /* Desperdício e previsão ------------------------------------------------- */
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .segmented { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); }

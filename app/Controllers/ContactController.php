@@ -7,8 +7,7 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Session;
 use App\Core\Validator;
-use PHPMailer\PHPMailer\Exception as MailException;
-use PHPMailer\PHPMailer\PHPMailer;
+use App\Services\Mailer;
 
 final class ContactController
 {
@@ -52,28 +51,28 @@ final class ContactController
             redirect('/contato');
         }
 
-        $mail = config('mail');
+        $text = "Nome: {$v->value('name')}
+E-mail: {$v->value('email')}
+
+{$v->value('message')}";
+        $html = Mailer::layout(
+            'Nova mensagem de contato',
+            '<p><strong>' . e($v->value('name')) . '</strong> &lt;' . e($v->value('email')) . '&gt;</p>'
+            . '<p><strong>Assunto:</strong> ' . e($v->value('subject')) . '</p>'
+            . '<p style="white-space:pre-wrap">' . e($v->value('message')) . '</p>'
+        );
+
         try {
-            $mailer = new PHPMailer(true);
-            $mailer->isSMTP();
-            $mailer->SMTPAuth = true;
-            $mailer->Host = $mail['host'];
-            $mailer->Port = $mail['port'];
-            $mailer->SMTPSecure = $mail['port'] === 465 ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
-            $mailer->Username = $mail['username'];
-            $mailer->Password = $mail['password'];
-            $mailer->CharSet = PHPMailer::CHARSET_UTF8;
-
-            // O remetente é sempre o endereço do sistema; o visitante vai no Reply-To.
-            $mailer->setFrom($mail['from'], $mail['from_name']);
-            $mailer->addAddress($mail['support']);
-            $mailer->addReplyTo($v->value('email'), $v->value('name'));
-
-            $mailer->Subject = '[SUME] ' . $v->value('subject');
-            $mailer->Body = "Nome: {$v->value('name')}\nE-mail: {$v->value('email')}\n\n{$v->value('message')}";
-            $mailer->send();
-        } catch (MailException $e) {
-            error_log('Falha ao enviar contato: ' . $e->getMessage());
+            // O remetente é sempre a conta do sistema; o visitante vai no Reply-To.
+            Mailer::send(
+                (string) config('mail.support'),
+                'Suporte SUME',
+                '[SUME] ' . $v->value('subject'),
+                $html,
+                $text,
+                [$v->value('email'), $v->value('name')]
+            );
+        } catch (\RuntimeException) {
             flash('error', 'Não foi possível enviar sua mensagem agora. Tente novamente mais tarde.');
             with_input();
             redirect('/contato');
@@ -86,8 +85,6 @@ final class ContactController
 
     private function isConfigured(): bool
     {
-        $mail = config('mail');
-
-        return $mail['host'] !== '' && $mail['from'] !== '' && $mail['support'] !== '';
+        return Mailer::isConfigured() && config('mail.support') !== '';
     }
 }

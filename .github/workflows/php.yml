@@ -30,6 +30,12 @@ jobs:
       DB_USERNAME: root
       DB_PASSWORD: root
       CONFIRMATION_DEADLINE: ""
+      # E-mails vão para storage/logs/mail.log e o Google é um servidor falso (tests/fake-google.php)
+      MAIL_DRIVER: log
+      GOOGLE_CLIENT_ID: test-client
+      GOOGLE_CLIENT_SECRET: test-secret
+      GOOGLE_AUTH_URL: http://127.0.0.1:8766/auth
+      GOOGLE_TOKEN_URL: http://127.0.0.1:8766/token
 
     steps:
       - uses: actions/checkout@v5
@@ -46,6 +52,9 @@ jobs:
       - name: Lint (sintaxe de todos os arquivos PHP)
         run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
 
+      - name: Rotas com APP_URL em subpasta (cenário XAMPP)
+        run: APP_URL=http://localhost:8080/SUME php tests/paths.php
+
       - name: Criar banco
         run: mysql -h 127.0.0.1 -uroot -proot < database/schema.sql
 
@@ -54,6 +63,7 @@ jobs:
 
       - name: Subir servidor
         run: |
+          php -S 127.0.0.1:8766 tests/fake-google.php > fake-google.log 2>&1 &
           php -S 127.0.0.1:8765 -t public public/index.php > server.log 2>&1 &
           for i in $(seq 1 20); do curl -sf http://127.0.0.1:8765/ > /dev/null && break; sleep 0.5; done
 
@@ -62,4 +72,4 @@ jobs:
 
       - name: Log do servidor (se falhar)
         if: failure()
-        run: cat server.log
+        run: cat server.log fake-google.log

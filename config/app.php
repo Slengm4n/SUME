@@ -31,6 +31,8 @@ return [
     ],
 
     'mail' => [
+        // smtp = envia de verdade | log = grava em storage/logs/mail.log (desenvolvimento e testes)
+        'driver'    => Env::get('MAIL_DRIVER', 'smtp'),
         'host'      => Env::get('MAIL_HOST', ''),
         'port'      => (int) Env::get('MAIL_PORT', '587'),
         'username'  => Env::get('MAIL_USERNAME', ''),
@@ -39,4 +41,16 @@ return [
         'from_name' => Env::get('MAIL_FROM_NAME', 'SUME'),
         'support'   => Env::get('MAIL_SUPPORT_ADDRESS', ''),
     ],
+
+    'google' => [
+        'client_id'     => Env::get('GOOGLE_CLIENT_ID', ''),
+        'client_secret' => Env::get('GOOGLE_CLIENT_SECRET', ''),
+        // Ex.: "etec.sp.gov.br,cps.sp.gov.br" para aceitar só e-mails desses domínios (vazio = qualquer conta Google)
+        'allowed_domains' => array_values(array_filter(array_map('trim', explode(',', (string) Env::get('GOOGLE_ALLOWED_DOMAINS', ''))))),
+        // Só para testes automatizados (servidor Google falso). Nunca altere em produção.
+        'auth_url'  => Env::get('GOOGLE_AUTH_URL', 'https://accounts.google.com/o/oauth2/v2/auth'),
+        'token_url' => Env::get('GOOGLE_TOKEN_URL', 'https://oauth2.googleapis.com/token'),
+    ],
+
+    'password_reset_minutes' => 60,
 ];

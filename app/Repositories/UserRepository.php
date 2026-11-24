@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 final class UserRepository extends Repository
 {
-    private const PUBLIC_COLUMNS = 'id, name, email, RM, codigo, profile_picture, is_master, points, created_at';
+    private const PUBLIC_COLUMNS = 'id, name, email, RM, codigo, profile_picture, is_master, points, google_id, created_at, (password_hash IS NOT NULL) AS has_password';
 
     public function find(int $id): ?array
     {
@@ -20,6 +20,21 @@ final class UserRepository extends Repository
             'SELECT ' . self::PUBLIC_COLUMNS . ', password_hash FROM user WHERE email = ? OR RM = ? LIMIT 1',
             [$identifier, $identifier]
         );
+    }
+
+    public function findByEmail(string $email): ?array
+    {
+        return $this->fetchOne('SELECT ' . self::PUBLIC_COLUMNS . ' FROM user WHERE email = ?', [$email]);
+    }
+
+    public function findByGoogleId(string $googleId): ?array
+    {
+        return $this->fetchOne('SELECT ' . self::PUBLIC_COLUMNS . ' FROM user WHERE google_id = ?', [$googleId]);
+    }
+
+    public function linkGoogle(int $id, ?string $googleId): void
+    {
+        $this->execute('UPDATE user SET google_id = ? WHERE id = ?', [$googleId, $id]);
     }
 
     public function passwordHash(int $id): ?string
@@ -40,13 +55,14 @@ final class UserRepository extends Repository
     public function create(array $data): int
     {
         $this->execute(
-            'INSERT INTO user (name, email, RM, codigo, password_hash, is_master) VALUES (?, ?, ?, ?, ?, ?)',
+            'INSERT INTO user (name, email, RM, codigo, password_hash, google_id, is_master) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [
                 $data['name'],
                 $data['email'],
                 $data['rm'] !== '' ? $data['rm'] : null,
                 $data['codigo'] !== '' ? $data['codigo'] : null,
-                password_hash($data['password'], PASSWORD_DEFAULT),
+                isset($data['password']) ? password_hash($data['password'], PASSWORD_DEFAULT) : null,
+                $data['google_id'] ?? null,
                 (int) ($data['is_master'] ?? 0),
             ]
         );
