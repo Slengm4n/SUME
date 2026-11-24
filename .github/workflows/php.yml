@@ -32,7 +32,7 @@ jobs:
       CONFIRMATION_DEADLINE: ""
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -41,7 +41,7 @@ jobs:
           tools: composer
 
       - name: Validar composer.json
-        run: composer validate --strict
+        run: composer validate --no-check-publish  # é uma aplicação, não um pacote publicável
 
       - name: Lint (sintaxe de todos os arquivos PHP)
         run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
