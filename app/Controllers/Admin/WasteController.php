@@ -13,7 +13,7 @@ use App\Services\WasteReport;
 /** Relatório de desperdício e registro das sobras de cada refeição. */
 final class WasteController
 {
-    private const PERIODS = [30 => 'Últimos 30 dias', 90 => 'Últimos 90 dias', 365 => 'Últimos 12 meses'];
+    private const PERIODS = [30 => '30 dias', 90 => '90 dias', 365 => '12 meses'];
 
     public function index(): void
     {

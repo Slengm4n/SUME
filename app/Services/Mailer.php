@@ -9,7 +9,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Envio de e-mails.
- *  - driver "smtp": envia de verdade (Gmail, Brevo...) via PHPMailer
+ *  - driver "smtp": envia de verdade pelo Gmail (senha de app) via PHPMailer
  *  - driver "log":  grava em storage/logs/mail.log (desenvolvimento e testes)
  */
 final class Mailer

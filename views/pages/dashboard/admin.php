@@ -87,18 +87,18 @@
     <section class="section-block" aria-labelledby="historico-titulo">
         <h2 id="historico-titulo" class="section-block__title"><?= icon('chart') ?> Últimas refeições</h2>
         <div class="table-wrap">
-            <table class="table">
+            <table class="table table--responsive">
                 <thead>
                     <tr><th>Data</th><th>Refeição</th><th class="num">Confirmados</th><th class="num">Nota</th><th class="num">Desperdício</th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($history as $m): ?>
                         <tr>
-                            <td class="nowrap"><?= e(format_date($m['menu_date'], true)) ?></td>
-                            <td><?= e($m['dish']) ?></td>
-                            <td class="num"><?= (int) $m['confirmations'] ?></td>
-                            <td class="num"><?= $m['avg_rating'] !== null ? e(number_format((float) $m['avg_rating'], 1, ',', '')) . ' ★' : '—' ?></td>
-                            <td class="num"><?= $m['prepared_portions'] !== null ? percent(\App\Services\WasteReport::rowRate($m)) : '<a href="' . e(url('/admin/desperdicio/registrar', ['id' => $m['id']])) . '">registrar</a>' ?></td>
+                            <td class="nowrap" data-label="Data"><?= e(format_date($m['menu_date'], true)) ?></td>
+                            <td data-label="Refeição"><?= e($m['dish']) ?></td>
+                            <td class="num" data-label="Confirmados"><?= (int) $m['confirmations'] ?></td>
+                            <td class="num" data-label="Nota"><?= $m['avg_rating'] !== null ? e(number_format((float) $m['avg_rating'], 1, ',', '')) . ' ★' : '—' ?></td>
+                            <td class="num" data-label="Desperdício"><?= $m['prepared_portions'] !== null ? percent(\App\Services\WasteReport::rowRate($m)) : '<a href="' . e(url('/admin/desperdicio/registrar', ['id' => $m['id']])) . '">registrar</a>' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

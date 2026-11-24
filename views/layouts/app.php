@@ -5,9 +5,9 @@ $nav = is_admin()
     ? [
         ['/painel', 'Painel', 'dashboard'],
         ['/admin/cardapio', 'Cardápio', 'calendar'],
-        ['/admin/confirmacoes', 'Confirmações', 'clipboard-check'],
-        ['/admin/desperdicio', 'Desperdício', 'leaf'],
-        ['/admin/avaliacoes', 'Avaliações', 'star'],
+        ['/admin/confirmacoes', 'Confirmações', 'clipboard-check', 'Presenças'],
+        ['/admin/desperdicio', 'Desperdício', 'leaf', 'Sobras'],
+        ['/admin/avaliacoes', 'Avaliações', 'star', 'Notas'],
         ['/admin/usuarios', 'Usuários', 'users'],
     ]
     : [
@@ -72,9 +72,9 @@ $nav = is_admin()
 </main>
 
 <nav class="tabbar" aria-label="Navegação rápida">
-    <?php foreach (array_slice($nav, 0, 5) as [$path, $label, $ic]): ?>
-        <a href="<?= url($path) ?>" class="tabbar__item<?= is_active($path) ? ' is-active' : '' ?>" <?= is_active($path) ? 'aria-current="page"' : '' ?>>
-            <?= icon($ic) ?><span><?= e($label) ?></span>
+    <?php foreach (array_slice($nav, 0, 5) as $item): [$path, $label, $ic] = $item; $short = $item[3] ?? $label; /* rótulo curto no celular */ ?>
+        <a href="<?= url($path) ?>" class="tabbar__item<?= is_active($path) ? ' is-active' : '' ?>" <?= is_active($path) ? 'aria-current="page"' : '' ?> title="<?= e($label) ?>">
+            <?= icon($ic) ?><span><?= e($short) ?></span>
         </a>
     <?php endforeach; ?>
 </nav>
