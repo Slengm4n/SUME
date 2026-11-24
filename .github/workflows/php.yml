@@ -1,4 +1,4 @@
-name: PHP Composer
+name: CI
 
 on:
   push:
@@ -10,30 +10,56 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports: [ "3306:3306" ]
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    env:
+      APP_ENV: development
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: sume_db
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      CONFIRMATION_DEADLINE: ""
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql, mbstring, fileinfo, gd
+          tools: composer
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+      - name: Validar composer.json
+        run: composer validate --strict
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      - name: Lint (sintaxe de todos os arquivos PHP)
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+      - name: Criar banco
+        run: mysql -h 127.0.0.1 -uroot -proot < database/schema.sql
 
-    # - name: Run test suite
-    #   run: composer run-script test
+      - name: Criar administrador de teste
+        run: SUME_ADMIN_PASSWORD=Admin1234 php bin/create-admin.php "Admin CI" admin@teste.com
+
+      - name: Subir servidor
+        run: |
+          php -S 127.0.0.1:8765 -t public public/index.php > server.log 2>&1 &
+          for i in $(seq 1 20); do curl -sf http://127.0.0.1:8765/ > /dev/null && break; sleep 0.5; done
+
+      - name: Teste de fumaça (ponta a ponta)
+        run: bash tests/smoke.sh
+
+      - name: Log do servidor (se falhar)
+        if: failure()
+        run: cat server.log

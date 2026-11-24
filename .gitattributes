@@ -1,0 +1,2 @@
+# Scripts shell precisam de LF para rodar no bash (inclusive no Windows)
+*.sh text eol=lf

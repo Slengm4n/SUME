@@ -1,0 +1,8 @@
+<span class="logo" aria-label="SUME">
+    <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect width="32" height="32" rx="9" fill="var(--brand)"/>
+        <path d="M10 7v7a3 3 0 0 0 3 3v8M13 7v6M16 7v7a3 3 0 0 1-3 3" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M22 25V7c-2.2 1.3-3 3.7-3 6.5V17h3" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo__text">SUM<span>E</span></span>
+</span>
