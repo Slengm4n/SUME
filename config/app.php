@@ -19,7 +19,10 @@ return [
     ],
 
     'points' => [
-        'confirmation' => (int) Env::get('POINTS_CONFIRMATION', '10'),
+        // Ganhos quando a cozinha marca a retirada (POINTS_CONFIRMATION é o nome antigo)
+        'pickup'  => (int) Env::get('POINTS_PICKUP', (string) Env::get('POINTS_CONFIRMATION', '10')),
+        // Perdidos por quem confirmou e não retirou, quando a cozinha encerra a retirada do dia
+        'no_show' => (int) Env::get('POINTS_NO_SHOW', '5'),
         'feedback'     => (int) Env::get('POINTS_FEEDBACK', '5'),
     ],
 

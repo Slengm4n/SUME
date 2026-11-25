@@ -21,6 +21,7 @@
                 <?php
                 $menu = $today;
                 $confirmed = $todayConfirmed;
+                $pickedUp = $todayPickedUp;
                 $compact = false;
                 require BASE_PATH . '/views/partials/meal-action.php';
                 ?>
@@ -47,7 +48,7 @@
         <div class="stat">
             <span class="stat__icon"><?= icon('utensils') ?></span>
             <span class="stat__value"><?= (int) $totalMeals ?></span>
-            <span class="stat__label">refeições</span>
+            <span class="stat__label">refeições retiradas<?php if ($attendance['confirmed'] > 0): ?><span class="stat__hint" title="Das refeições que você confirmou, quantas retirou"><?= e(percent($attendance['picked_up'] / $attendance['confirmed'], 0)) ?> de comparecimento</span><?php endif; ?></span>
         </div>
     </section>
 </div>
@@ -86,6 +87,7 @@
                     <?php
                     $menu = $m;
                     $confirmed = in_array((int) $m['id'], $confirmedIds, true);
+                    $pickedUp = false;
                     $compact = true;
                     require BASE_PATH . '/views/partials/meal-action.php';
                     ?>

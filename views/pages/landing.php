@@ -32,7 +32,7 @@
             </div>
             <div class="mock mock--small">
                 <?= icon('trophy') ?>
-                <div><strong>+10 pontos</strong><span>pela confirmação</span></div>
+                <div><strong>+10 pontos</strong><span>pela retirada</span></div>
             </div>
         </div>
     </div>

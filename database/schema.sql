@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS menu (
     leftover_portions INT UNSIGNED  NULL,
     waste_kg          DECIMAL(7,2) UNSIGNED NULL,
     waste_recorded_at TIMESTAMP     NULL,
-    created_at        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    pickup_closed_at  TIMESTAMP     NULL,        -- cozinha encerrou a retirada (quem não retirou perde pontos)
+    created_at       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uq_menu_date (menu_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -48,6 +49,8 @@ CREATE TABLE IF NOT EXISTS confirmations (
     user_id       INT UNSIGNED NOT NULL,
     menu_id       INT UNSIGNED NOT NULL,
     confirmed_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    picked_up_at  TIMESTAMP    NULL,                -- cozinha marcou que o aluno retirou a refeição
+    points_awarded INT         NOT NULL DEFAULT 0,  -- pontos que esta confirmação rendeu até agora (pode ser negativo)
     PRIMARY KEY (id),
     UNIQUE KEY uq_confirmation (user_id, menu_id),
     KEY idx_confirmation_menu (menu_id),

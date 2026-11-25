@@ -66,6 +66,8 @@ $router->post('/admin/cardapio/excluir', [MenuController::class, 'destroy'], ['a
 $router->get('/admin/confirmacoes', [ConfirmationController::class, 'index'], ['admin']);
 $router->get('/admin/confirmacoes/dados', [ConfirmationController::class, 'json'], ['admin']);
 $router->get('/admin/confirmacoes/exportar', [ConfirmationController::class, 'export'], ['admin']);
+$router->post('/admin/confirmacoes/retirada', [ConfirmationController::class, 'pickup'], ['admin']);
+$router->post('/admin/confirmacoes/encerrar', [ConfirmationController::class, 'close'], ['admin']);
 $router->get('/admin/desperdicio', [WasteController::class, 'index'], ['admin']);
 $router->get('/admin/desperdicio/registrar', [WasteController::class, 'edit'], ['admin']);
 $router->post('/admin/desperdicio/registrar', [WasteController::class, 'update'], ['admin']);

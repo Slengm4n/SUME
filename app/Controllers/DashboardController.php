@@ -32,12 +32,12 @@ final class DashboardController
         $upcoming = $menus->upcoming(6);
         $confirmedIds = $confirmations->menuIdsConfirmedBy($userId, array_column($upcoming, 'id'));
 
-        // Refeições (hoje + últimos 7 dias) que o aluno confirmou e ainda não avaliou
+        // Refeições (hoje + últimos 7 dias) que o aluno retirou e ainda não avaliou
         $recent = array_merge($today ? [$today] : [], $menus->history(7));
-        $recentConfirmed = $confirmations->menuIdsConfirmedBy($userId, array_column($recent, 'id'));
+        $recentPickedUp = $confirmations->menuIdsPickedUpBy($userId, array_column($recent, 'id'));
         $pendingFeedback = array_values(array_filter(
             $recent,
-            fn (array $m) => in_array((int) $m['id'], $recentConfirmed, true)
+            fn (array $m) => in_array((int) $m['id'], $recentPickedUp, true)
                 && !$feedbacks->findByUserAndMeal($userId, (int) $m['id'])
         ));
 
@@ -46,11 +46,13 @@ final class DashboardController
             'user'            => $user,
             'today'           => $today,
             'todayConfirmed'  => $today && in_array((int) $today['id'], $confirmedIds, true),
+            'todayPickedUp'   => $today && in_array((int) $today['id'], $recentPickedUp, true),
             'upcoming'        => array_values(array_filter($upcoming, fn ($m) => $m['menu_date'] !== today())),
             'confirmedIds'    => $confirmedIds,
             'pendingFeedback' => array_slice($pendingFeedback, 0, 3),
             'rank'            => (new UserRepository())->rankPosition($userId),
-            'totalMeals'      => $confirmations->countForUser($userId),
+            'totalMeals'      => $confirmations->pickedUpCountForUser($userId),
+            'attendance'      => $confirmations->attendanceForUser($userId),
         ]);
     }
 
@@ -58,13 +60,16 @@ final class DashboardController
     {
         $menus = new MenuRepository();
         $today = $menus->forDate(today());
-        $confirmations = $today ? (new ConfirmationRepository())->countForMenu((int) $today['id']) : 0;
+        $repo = new ConfirmationRepository();
+        $confirmations = $today ? $repo->countForMenu((int) $today['id']) : 0;
+        $pickedUp = $today ? $repo->pickedUpCountForMenu((int) $today['id']) : 0;
 
         view('pages/dashboard/admin', [
             'title'         => 'Painel',
             'user'          => Auth::user(),
             'today'         => $today,
             'confirmations' => $confirmations,
+            'pickedUp'      => $pickedUp,
             'forecast'      => $today ? (new DemandForecast())->suggest(today(), $confirmations) : null,
             'waste'         => WasteReport::summarize($menus->wasteRows(date('Y-m-d', strtotime('-29 days')), today())),
             'wastePending'  => $menus->pendingWasteCount(),
