@@ -136,7 +136,7 @@ final class GoogleController
         Session::forget(self::PENDING);
 
         Auth::login($users->find($id));
-        flash('success', 'Conta criada! Confirme sua presença nas refeições para ganhar pontos.');
+        flash('success', 'Conta criada! Confirme sua presença nas refeições e retire seu prato para ganhar pontos.');
         redirect('/painel');
     }
 

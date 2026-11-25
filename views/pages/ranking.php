@@ -6,7 +6,7 @@ $medals = ['gold', 'silver', 'bronze'];
 <header class="page-header">
     <div>
         <h1>Ranking</h1>
-        <p class="muted">Confirme presença (+<?= (int) config('points.confirmation') ?>) e avalie refeições (+<?= (int) config('points.feedback') ?>) para subir.</p>
+        <p class="muted">Retire a refeição que confirmou (+<?= (int) config('points.pickup') ?>) e avalie (+<?= (int) config('points.feedback') ?>) para subir. Confirmou e não foi? −<?= (int) config('points.no_show') ?>.</p>
     </div>
 </header>
 

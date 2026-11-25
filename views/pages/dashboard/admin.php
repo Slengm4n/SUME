@@ -10,7 +10,7 @@
     <a class="stat stat--link" href="<?= url('/admin/confirmacoes') ?>">
         <span class="stat__icon"><?= icon('clipboard-check') ?></span>
         <span class="stat__value"><?= (int) $confirmations ?></span>
-        <span class="stat__label">confirmados hoje</span>
+        <span class="stat__label">confirmados hoje<?php if ($confirmations > 0): ?> · <?= (int) $pickedUp ?> retiraram<?php endif; ?></span>
     </a>
     <div class="stat">
         <span class="stat__icon"><?= icon('users') ?></span>
@@ -33,7 +33,7 @@
     <section class="card" aria-labelledby="hoje-titulo">
         <div class="card__head">
             <h2 id="hoje-titulo" class="card__title"><?= icon('utensils') ?> Hoje</h2>
-            <a href="<?= url('/admin/confirmacoes') ?>" class="link">Ver confirmações <?= icon('chevron-right') ?></a>
+            <a href="<?= url('/admin/confirmacoes') ?>" class="link">Registrar retiradas <?= icon('chevron-right') ?></a>
         </div>
         <?php if ($today): ?>
             <p class="today__dish"><?= e($today['dish']) ?></p>

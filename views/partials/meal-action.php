@@ -1,14 +1,17 @@
 <?php
 /**
  * Botão de confirmar/cancelar presença para uma refeição.
- * Espera: $menu (array), $confirmed (bool), $compact (bool, opcional)
+ * Espera: $menu (array), $confirmed (bool), $compact (bool, opcional), $pickedUp (bool, opcional)
  */
 $compact ??= false;
+$pickedUp ??= false;
 $closed = confirmation_closed($menu['menu_date']);
 ?>
-<?php if ($closed): ?>
+<?php if ($pickedUp): ?>
+    <span class="badge badge--success"><?= icon('check') ?> Retirada · +<?= (int) config('points.pickup') ?> pontos</span>
+<?php elseif ($closed): ?>
     <span class="badge <?= $confirmed ? 'badge--success' : 'badge--muted' ?>">
-        <?= icon($confirmed ? 'check' : 'lock') ?> <?= $confirmed ? 'Confirmado' : 'Prazo encerrado' ?>
+        <?= icon($confirmed ? 'check' : 'lock') ?> <?= $confirmed ? 'Confirmado · retire na cozinha' : 'Prazo encerrado' ?>
     </span>
 <?php elseif ($confirmed): ?>
     <form method="post" action="<?= url('/refeicao/cancelar') ?>" class="inline-form">
@@ -17,7 +20,7 @@ $closed = confirmation_closed($menu['menu_date']);
         <?php if (!$compact): ?>
             <span class="badge badge--success"><?= icon('check') ?> Presença confirmada</span>
         <?php endif; ?>
-        <button type="submit" class="btn btn--ghost btn--sm" data-confirm="Cancelar sua presença em <?= e(format_date($menu['menu_date'], true)) ?>? Os pontos ganhos serão devolvidos.">
+        <button type="submit" class="btn btn--ghost btn--sm" data-confirm="Cancelar sua presença em <?= e(format_date($menu['menu_date'], true)) ?>? Avisar com antecedência ajuda a cozinha a não desperdiçar.">
             <?= $compact ? icon('check') . ' Confirmado · cancelar' : 'Não vou mais' ?>
         </button>
     </form>

@@ -17,10 +17,12 @@ final class MealController
         $menu = $this->menuFromRequest();
         $this->ensureOpen($menu);
 
-        $ok = (new ConfirmationRepository())->confirm(Auth::id(), (int) $menu['id'], (int) config('points.confirmation'));
+        $ok = (new ConfirmationRepository())->confirm(Auth::id(), (int) $menu['id']);
         flash(
             $ok ? 'success' : 'info',
-            $ok ? 'Presença confirmada! +' . config('points.confirmation') . ' pontos.' : 'Você já tinha confirmado essa refeição.'
+            $ok
+                ? 'Presença confirmada! Retire sua refeição para ganhar +' . config('points.pickup') . ' pontos.'
+                : 'Você já tinha confirmado essa refeição.'
         );
         back();
     }
@@ -35,8 +37,12 @@ final class MealController
             back();
         }
 
-        $ok = (new ConfirmationRepository())->cancel(Auth::id(), (int) $menu['id'], (int) config('points.confirmation'));
-        flash($ok ? 'success' : 'info', $ok ? 'Presença cancelada. Obrigado por avisar!' : 'Você não tinha confirmado essa refeição.');
+        $result = (new ConfirmationRepository())->cancel(Auth::id(), (int) $menu['id']);
+        match ($result) {
+            'cancelled' => flash('success', 'Presença cancelada. Obrigado por avisar!'),
+            'picked_up' => flash('error', 'Você já retirou essa refeição, então não é possível cancelar.'),
+            default     => flash('info', 'Você não tinha confirmado essa refeição.'),
+        };
         back();
     }
 
@@ -88,7 +94,7 @@ final class MealController
         }
     }
 
-    /** Refeição que o aluno pode avaliar: já servida (até 7 dias) e confirmada por ele. */
+    /** Refeição que o aluno pode avaliar: já servida (até 7 dias) e retirada por ele. */
     private function feedbackMenu(): array
     {
         $menus = new MenuRepository();
@@ -103,8 +109,8 @@ final class MealController
             flash('info', 'Só é possível avaliar refeições servidas nos últimos 7 dias.');
             redirect('/painel');
         }
-        if (!(new ConfirmationRepository())->exists(Auth::id(), (int) $menu['id'])) {
-            flash('info', 'Você só pode avaliar refeições em que confirmou presença.');
+        if (!(new ConfirmationRepository())->pickedUp(Auth::id(), (int) $menu['id'])) {
+            flash('info', 'Você só pode avaliar refeições que retirou. A cozinha marca a retirada na hora em que você pega o prato.');
             redirect('/painel');
         }
 

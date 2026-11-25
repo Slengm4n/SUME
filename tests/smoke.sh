@@ -31,6 +31,8 @@ req() {
 }
 token() { grep -o 'name="_token" value="[^"]*"' "$WORK/body" | head -1 | sed 's/.*value="//; s/"$//'; }
 body_has() { grep -q -- "$1" "$WORK/body"; }
+# has_points <jar> <n>: o perfil do aluno logado em <jar> mostra exatamente <n> pontos
+has_points() { curl -s -b "$WORK/$1" "$BASE_URL/perfil" | grep -q "<dt>Pontos</dt><dd>$2</dd>"; }
 TODAY=$(date +%Y-%m-%d)
 TOMORROW=$(date -d tomorrow +%Y-%m-%d 2>/dev/null || date -v+1d +%Y-%m-%d)
 
@@ -104,11 +106,41 @@ T=$(token)
 MENU_ID=$(grep -o 'name="menu_id" value="[0-9]*"' "$WORK/body" | head -1 | grep -o '[0-9]*')
 req aluno POST /refeicao/confirmar --data-urlencode "_token=$T" --data "menu_id=$MENU_ID"
 req aluno POST /refeicao/confirmar --data-urlencode "_token=$T" --data "menu_id=$MENU_ID"
-req aluno GET /ranking
-check "confirmação dá pontos uma única vez (10 pts)" 'body_has ">10 pts<"'
+check "confirmar sozinho não dá pontos (só a retirada dá)" 'has_points aluno 0'
 
 req admin GET /admin/confirmacoes/dados
 check "JSON de confirmações traz o aluno, sem HTML executável" '[ "$STATUS" = 200 ] && grep -q "\"total\":1" "$WORK/body" && grep -q "<script>" "$WORK/body"'
+
+req aluno GET "/avaliar?refeicao=$MENU_ID"
+check "não dá para avaliar antes de retirar" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */painel ]]'
+
+echo "Retirada"
+req aluno GET /painel
+T=$(token)
+ALUNO_UID=$(curl -s -b "$WORK/admin" "$BASE_URL/admin/confirmacoes/dados" | grep -o '"people":\[{"id":[0-9]*' | grep -o '[0-9]*$')
+req aluno POST /admin/confirmacoes/retirada --data-urlencode "_token=$T" --data "menu_id=$MENU_ID" --data "user_id=$ALUNO_UID" --data 'picked_up=1'
+check "aluno não consegue marcar a própria retirada (403)" '[ "$STATUS" = 403 ]'
+req admin GET /admin/confirmacoes
+check "tela de confirmações mostra o botão de retirada" '[ "$STATUS" = 200 ] && body_has "Marcar retirada" && body_has "Encerrar retirada"'
+TA=$(token)
+pickup() { req admin POST /admin/confirmacoes/retirada --data-urlencode "_token=$TA" --data "menu_id=$1" --data "user_id=$2" --data "picked_up=$3" "${@:4}"; }
+pickup "$MENU_ID" "$ALUNO_UID" 1
+check "cozinha marca a retirada (volta para a lista)" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == *admin/confirmacoes* ]]'
+pickup "$MENU_ID" "$ALUNO_UID" 1
+check "retirada dá +10 pontos uma única vez" 'has_points aluno 10'
+pickup "$MENU_ID" "$ALUNO_UID" 0
+check "desmarcar a retirada devolve os pontos" 'has_points aluno 0'
+pickup "$MENU_ID" "$ALUNO_UID" 1 -H 'Accept: application/json'
+check "marcar pela tela (JSON) responde com a lista atualizada" '[ "$STATUS" = 200 ] && grep -q "\"pickedUp\":1" "$WORK/body"'
+check "e os pontos voltam (10)" 'has_points aluno 10'
+pickup "$((MENU_ID + 1))" "$ALUNO_UID" 1 -H 'Accept: application/json'
+check "não marca retirada de refeição futura" '[ "$STATUS" = 422 ]'
+pickup "$MENU_ID" 999999 1 -H 'Accept: application/json'
+check "não marca retirada de quem não confirmou" '[ "$STATUS" = 404 ]'
+req admin GET "/admin/confirmacoes/exportar?data=$TODAY"
+check "CSV de confirmados mostra quem retirou" 'grep -q "Sim (" "$WORK/body"'
+req aluno GET /painel
+check "painel do aluno mostra a refeição como retirada" 'body_has "Retirada ·"'
 
 req aluno GET "/avaliar?refeicao=$MENU_ID"
 T=$(token)
@@ -116,11 +148,45 @@ req aluno POST "/avaliar?refeicao=$MENU_ID" --data-urlencode "_token=$T" --data 
 check "nota fora de 1..5 é recusada" '[[ "$LOCATION" == *avaliar* ]]'
 req aluno POST "/avaliar?refeicao=$MENU_ID" --data-urlencode "_token=$T" --data 'rating=5' --data-urlencode 'comment=Muito bom'
 req aluno POST "/avaliar?refeicao=$MENU_ID" --data-urlencode "_token=$T" --data 'rating=1'
-req aluno GET /ranking
-check "avaliação soma 5 pts uma única vez (15 pts)" 'body_has ">15 pts<"'
+check "avaliação soma 5 pts uma única vez (15 pts)" 'has_points aluno 15'
 req aluno POST /refeicao/cancelar --data-urlencode "_token=$T" --data "menu_id=$MENU_ID"
-req aluno GET /ranking
-check "não dá para cancelar depois de avaliar" 'body_has ">15 pts<"'
+check "não dá para cancelar depois de retirar/avaliar" 'has_points aluno 15'
+
+echo "Encerrar retirada (quem confirmou e não retirou)"
+req faltou GET /cadastro
+T=$(token)
+req faltou POST /cadastro --data-urlencode "_token=$T" --data-urlencode 'name=Zeca Faltoso' \
+  --data-urlencode 'email=faltou@teste.com' --data-urlencode 'rm=55555' --data-urlencode 'codigo=101' \
+  --data-urlencode 'password=Senha1234' --data-urlencode 'password_confirmation=Senha1234' --data-urlencode 'terms=1'
+req faltou GET /painel
+T=$(token)
+req faltou POST /refeicao/confirmar --data-urlencode "_token=$T" --data "menu_id=$MENU_ID"
+FALTOU_UID=$(curl -s -b "$WORK/admin" "$BASE_URL/admin/confirmacoes/dados" | grep -o '"id":[0-9]*,"name":"Zeca' | grep -o '[0-9]*')
+# Zeca retira e avalia (15), depois a cozinha percebe o engano e desmarca a retirada (fica com os 5 da avaliação)
+pickup "$MENU_ID" "$FALTOU_UID" 1
+req faltou GET "/avaliar?refeicao=$MENU_ID"
+T=$(token)
+req faltou POST "/avaliar?refeicao=$MENU_ID" --data-urlencode "_token=$T" --data 'rating=3'
+check "segundo aluno retirou e avaliou (15)" 'has_points faltou 15'
+pickup "$MENU_ID" "$FALTOU_UID" 0
+check "retirada desmarcada: sobram os 5 da avaliação" 'has_points faltou 5'
+req admin POST /admin/confirmacoes/encerrar --data-urlencode "_token=$TA" --data "menu_id=$MENU_ID" --data 'closed=1'
+req admin GET "/admin/confirmacoes?data=$TODAY"
+check "encerrar informa quantos não retiraram" 'body_has "1 aluno(s) confirmaram e não retiraram" && body_has "Retirada encerrada"'
+check "quem não retirou perde 5 pontos (5 → 0)" 'has_points faltou 0'
+check "quem retirou não perde nada" 'has_points aluno 15'
+req admin POST /admin/confirmacoes/encerrar --data-urlencode "_token=$TA" --data "menu_id=$MENU_ID" --data 'closed=1'
+check "encerrar duas vezes não tira pontos de novo (nem fica negativo)" 'has_points faltou 0'
+req admin POST /admin/confirmacoes/encerrar --data-urlencode "_token=$TA" --data "menu_id=$MENU_ID" --data 'closed=0'
+check "reabrir devolve os pontos perdidos (5)" 'has_points faltou 5'
+req admin POST /admin/confirmacoes/encerrar --data-urlencode "_token=$TA" --data "menu_id=$MENU_ID" --data 'closed=1'
+check "encerrar de novo aplica a perda uma única vez (0)" 'has_points faltou 0'
+pickup "$MENU_ID" "$FALTOU_UID" 1
+check "marcar a retirada depois de encerrar corrige tudo (15)" 'has_points faltou 15'
+pickup "$MENU_ID" "$FALTOU_UID" 0
+check "e desmarcar volta à perda (0)" 'has_points faltou 0'
+req faltou GET "/avaliar?refeicao=$MENU_ID"
+check "quem não retirou não avalia" '[ "$STATUS" = 302 ] && [[ "$LOCATION" == */painel ]]'
 
 req admin GET /admin/avaliacoes
 check "admin vê a avaliação" 'body_has "Muito bom"'

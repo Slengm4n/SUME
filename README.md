@@ -8,14 +8,15 @@ O SUME ajuda escolas a **reduzir o desperdício da merenda**: cada aluno confirm
 
 **Alunos**
 - Confirmar (e cancelar) presença na refeição do dia e dos próximos dias, até um horário limite configurável
-- Avaliar refeições com 1 a 5 estrelas e comentário
-- Ganhar pontos e acompanhar o ranking da escola
+- Avaliar com 1 a 5 estrelas e comentário as refeições que retirou
+- Ganhar pontos e acompanhar o ranking da escola e o próprio comparecimento (veja [Pontos](#pontos))
 - Editar perfil, foto e senha
 - Entrar com a conta Google ou com e-mail/RM e senha; recuperar a senha por e-mail
 
 **Administradores (cozinha/gestão)**
 - Cadastrar o cardápio por data
-- Acompanhar as confirmações ao vivo (atualiza sozinho), exportar para Excel ou imprimir/salvar em PDF com coluna de "retirou"
+- Acompanhar as confirmações ao vivo (atualiza sozinho), exportar para Excel ou imprimir/salvar em PDF
+- **Registro de retirada:** na hora de servir, marcar quem pegou o prato com um toque (ou digitar o RM e apertar Enter); ao terminar, encerrar a retirada do dia
 - **Previsão de demanda:** o sistema sugere quantas porções preparar com base nas confirmações e no comparecimento histórico (inclusive por dia da semana)
 - **Controle de desperdício:** registrar porções preparadas, sobras e kg descartados; relatório com taxa de desperdício, comparação com o período anterior, gráfico semanal e exportação para Excel
 - Ver avaliações com média e distribuição das notas
@@ -64,6 +65,7 @@ php -S localhost:8000 -t public public/index.php
    mysql -u root sume_db < database/migrations/001_atualiza_banco_legado.sql
    mysql -u root sume_db < database/migrations/002_controle_desperdicio.sql
    mysql -u root sume_db < database/migrations/003_login_google_e_recuperacao_senha.sql
+   mysql -u root sume_db < database/migrations/004_registro_de_retirada.sql
    ```
 3. Mova as fotos antigas de `uploads/` para `public/uploads/avatars/`.
 4. Crie o `.env` (passo 4 da instalação).
@@ -106,11 +108,26 @@ Para adicionar uma página: crie a rota em `routes.php`, o método no controller
 | Tabela | Para que serve |
 |---|---|
 | `user` | Alunos e administradores (`is_master = 1`), pontos e foto |
-| `menu` | Uma refeição por data (`menu_date` é único) + porções preparadas, sobras e kg descartados |
-| `confirmations` | Quem confirmou presença em cada refeição (único por aluno+refeição) |
+| `menu` | Uma refeição por data (`menu_date` é único) + porções preparadas, sobras, kg descartados e quando a retirada foi encerrada |
+| `confirmations` | Quem confirmou presença em cada refeição (único por aluno+refeição), quando retirou e quantos pontos aquela confirmação já rendeu |
 | `feedbacks` | Nota (1–5) e comentário de cada aluno por refeição (único por aluno+refeição) |
 
 As regras "uma refeição por dia", "uma confirmação por aluno" e "uma avaliação por aluno" são garantidas por índices únicos no próprio banco. Veja os detalhes em [`database/schema.sql`](database/schema.sql).
+
+## Pontos
+
+Os pontos premiam quem **aparece**, não só quem confirma, porque confirmar e faltar é justamente o que gera desperdício.
+
+| Ação | Pontos | Configuração no `.env` |
+|---|---|---|
+| Confirmar presença | 0 | — |
+| A cozinha marca que o aluno retirou | +10 | `POINTS_PICKUP` |
+| Avaliar uma refeição retirada | +5 | `POINTS_FEEDBACK` |
+| Confirmou, não retirou e a cozinha encerrou a retirada | −5 | `POINTS_NO_SHOW` |
+
+Tudo pode ser desfeito sem distorcer o ranking: desmarcar uma retirada ou reabrir o dia devolve exatamente o que foi dado ou tirado. Cada confirmação guarda quanto já rendeu (`points_awarded`) e toda mudança aplica só a diferença. O saldo nunca fica negativo. A lógica está em [`app/Repositories/ConfirmationRepository.php`](app/Repositories/ConfirmationRepository.php).
+
+> Se a cozinha não encerrar a retirada, ninguém perde pontos. Assim, uma escola que ainda não usa o registro de retirada não pune os alunos por engano.
 
 ## E-mail e login com Google
 
