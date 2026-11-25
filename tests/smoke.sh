@@ -33,6 +33,12 @@ token() { grep -o 'name="_token" value="[^"]*"' "$WORK/body" | head -1 | sed 's/
 body_has() { grep -q -- "$1" "$WORK/body"; }
 # has_points <jar> <n>: o perfil do aluno logado em <jar> mostra exatamente <n> pontos
 has_points() { curl -s -b "$WORK/$1" "$BASE_URL/perfil" | grep -q "<dt>Pontos</dt><dd>$2</dd>"; }
+# "Hoje" no fuso do app (America/Sao_Paulo por padrão), não no do servidor:
+# o CI roda em UTC, e entre 21h e meia-noite as datas seriam diferentes.
+# Só aplica se o sistema conhece o fuso (o Git Bash no Windows não conhece e
+# cairia para UTC; lá o relógio local já está no fuso certo).
+APP_TZ="${APP_TIMEZONE:-America/Sao_Paulo}"
+[ -e "/usr/share/zoneinfo/$APP_TZ" ] && export TZ="$APP_TZ"
 TODAY=$(date +%Y-%m-%d)
 TOMORROW=$(date -d tomorrow +%Y-%m-%d 2>/dev/null || date -v+1d +%Y-%m-%d)
 
